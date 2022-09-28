@@ -3,7 +3,6 @@ const { Users } = require('../models');
 module.exports = {
 	//Create
 	createUser(req, res) {
-		console.log(req.body);
 		Users.create(req.body)
 			.then((user) => res.json(user))
 			.catch((error) => {
@@ -13,26 +12,47 @@ module.exports = {
 	},
 	//Read
 	getUsers(req, res) {
-		Users.find()
+		Users.find({})
 			.then((users) => res.json(users))
 			.catch((error) => res.status(500).json(error));
 	},
 
-	getOneUser(req, res) {
-		Users.findOne({ username: req.params.userName })
-			.select('-__v')
+	getById(req, res) {
+		Users.find({ _id: req.params.id })
 			.then((user) =>
 				!user
-					? res
-							.status(404)
-							.json({ message: 'No users found with that username' })
+					? res.status(404).json({ message: 'No user found with that id' })
 					: res.json(user)
 			)
 			.catch((error) => res.status(500).json(error));
 	},
 
 	//Update
+	addFriend(req, res) {
+		Users.findOneAndUpdate(
+			{ _id: req.params.userId },
+			{ $push: { friends: req.params.friendId } }
+		).then((user) =>
+			!user
+				? res
+						.status(404)
+						.json({ message: 'Could not add friend user does not exist' })
+				: res.json(user)
+		);
+	},
 
+	deleteFriend(req, res) {
+		Users.findOneAndUpdate(
+			{ _id: req.params.userId },
+			{ $pull: { friends: req.params.friendId } }
+		).then((user) =>
+			!user
+				? res
+						.status(404)
+						.json({ message: 'Could not delete friend user does not exist' })
+				: res.json(user)
+		);
+	},
 	//Delete
 	deleteOneUser(req, res) {
 		Users.findOneAndDelete({ username: req.params.userName })
