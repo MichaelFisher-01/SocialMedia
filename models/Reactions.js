@@ -1,4 +1,5 @@
 const { Schema, Types, model } = require('mongoose');
+const { formatDate } = require('../utils/dateFormat');
 
 const reactionSchema = new Schema(
 	{
@@ -18,6 +19,7 @@ const reactionSchema = new Schema(
 		createdAt: {
 			type: Date,
 			default: Date.now(),
+			get: (date) => formatDate(date),
 		},
 	},
 	{
@@ -28,18 +30,4 @@ const reactionSchema = new Schema(
 	}
 );
 
-// reactionSchema.virtual('timestamp').get(function () {
-// 	const date = this.date;
-// 	const options = {
-// 		year: 'numeric',
-// 		month: 'short',
-// 		day: 'numeric',
-// 		hour: 'numeric',
-// 		minute: 'numeric',
-// 	};
-// 	return new Date(date).toLocaleDateString('us-en', options);
-// });
-
-const Reactions = model('reaction', reactionSchema);
-
-module.exports = Reactions;
+module.exports = reactionSchema;
