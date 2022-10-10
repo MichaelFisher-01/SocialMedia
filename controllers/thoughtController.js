@@ -23,7 +23,7 @@ module.exports = {
 	//Read
 	getThoughts(req, res) {
 		Thoughts.find({})
-			.populate('reactions')
+			.populate({ path: 'reactions', select: 'reactionBody' })
 			.then((thoughts) => res.json(thoughts))
 			.catch((error) => res.status(500).json(error));
 	},
